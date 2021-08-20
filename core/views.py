@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from core.models import Post
 from core.serializers import PostSerializer
+from core.permissions import IsOwnerOrReadOnly
 
 
 @api_view(['GET'])
@@ -50,7 +51,6 @@ class PostCreate(generics.CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     def perform_create(self, serializer):
-        print(f"REQUEST USER: {self.request.user}")
         serializer.save(author=self.request.user)
         
         
@@ -60,6 +60,6 @@ class PostDetail(generics.RetrieveAPIView):
     serializer_class = PostSerializer
 
 class PostEdit(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
