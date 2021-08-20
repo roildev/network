@@ -1,10 +1,16 @@
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
-from rest_framework import permissions, status
+from django.http import Http404
+from rest_framework import permissions, status, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from core.models import Post
+from core.serializers import PostSerializer
 
 
 @api_view(['GET'])
@@ -31,3 +37,20 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PostList(generics.ListCreateAPIView):
+    # List all posts or create a new post
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class PostDetail(generics.RetrieveUpdateDestroyAPIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
