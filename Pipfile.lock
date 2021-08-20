@@ -40,13 +40,6 @@
             "index": "pypi",
             "version": "==3.8.0"
         },
-        "django-pygments": {
-            "hashes": [
-                "sha256:0210b517e19f3fd12856610fc3f6cf87dac359b211fa3009ff3ef78f2e2e61b8"
-            ],
-            "index": "pypi",
-            "version": "==0.4"
-        },
         "djangorestframework": {
             "hashes": [
                 "sha256:6d1d59f623a5ad0509fe0d6bfe93cbdfe17b8116ebc8eda86d45f6e16e819aaf",

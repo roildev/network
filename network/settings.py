@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 """
 Django settings for network project.
 
@@ -38,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'django_pygments',
     'rest_framework',
     'corsheaders',
     'core.apps.CoreConfig',
@@ -56,24 +57,27 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-   'DEFAULT_PERMISSION_CLASSES': (
-       'rest_framework.permissions.IsAuthenticated',
-   ),
-   'DEFAULT_AUTHENTICATION_CLASSES': (
-       'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-       'rest_framework.authentication.SessionAuthentication',
-       'rest_framework.authentication.BasicAuthentication',
-   ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
 JWT_AUTH = {
-   'JWT_RESPONSE_PAYLOAD_HANDLER': 'network.utils.my_jwt_response_handler'
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_EXPIRATION_DELTA': timedelta(seconds=300),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'network.utils.my_jwt_response_handler'
 }
 
 
 
 CORS_ORIGIN_WHITELIST = (
-   'http://localhost:3000',
+    'http://localhost:3000',
 )
 
 ROOT_URLCONF = 'network.urls'
