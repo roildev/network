@@ -10,7 +10,7 @@ from rest_framework.serializers import  (
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from core.models import Post, Publisher
+from core.models import Follower, Post, Publisher
 
 
 # USER SERIALIZERS
@@ -68,3 +68,11 @@ class PostSerializer(ModelSerializer):
     class Meta:
         model = Post
         fields = ('id', 'author', 'body', 'date')
+
+
+# FOLLOWER SERIALIZERS
+
+class FollowerSerializer(ModelSerializer):
+    class Meta:
+        model = Follower
+        fields = ('id', 'user', 'publisher')

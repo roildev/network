@@ -73,17 +73,17 @@ class Follower(models.Model):
         else:
             super().save(*args, **kwargs)
     
-    def serialize_foll(self):
-        return {
-            "id": self.user.id,
-            "name": self.user.username,
-        }
+    # def serialize_foll(self):
+    #     return {
+    #         "id": self.user.id,
+    #         "name": self.user.username,
+    #     }
         
-    def serialize_pub(self):
-        return {
-            "id": self.publisher.user.id,
-            "name": self.publisher.user.username,
-        }
+    # def serialize_pub(self):
+    #     return {
+    #         "id": self.publisher.user.id,
+    #         "name": self.publisher.user.username,
+    #     }
 
 
 class Comment(models.Model):

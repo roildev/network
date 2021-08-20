@@ -9,9 +9,11 @@ from .serializers import UserSerializer, UserSerializerWithToken
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from core.models import Post
-from core.serializers import PostSerializer
-from core.permissions import IsOwnerOrReadOnly
+from core.models import Follower, Post
+from core.serializers import (
+    PostSerializer,
+    FollowerSerializer)
+from core.permissions import IsOwnerOrReadOnly, FollowerIsNotPublisher
 
 
 @api_view(['GET'])
@@ -40,6 +42,7 @@ class UserRegistre(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# POST CLASS
 class PostList(generics.ListAPIView):
     # List all posts or create a new post
     permission_classes = (permissions.AllowAny,)
@@ -53,7 +56,6 @@ class PostCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
         
-        
 class PostDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.AllowAny,)
     queryset = Post.objects.all()
@@ -63,3 +65,13 @@ class PostEdit(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+
+# FOLLOWING CLASS 
+class FollowCreate(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated, FollowerIsNotPublisher,)
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
