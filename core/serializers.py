@@ -61,19 +61,10 @@ class PostSerializer(ModelSerializer):
     author = ReadOnlyField(source='author.username')
     
     def create(self, validated_data):
-
-        
-        # Check existing of this author how publisher
-        publ = Publisher.objects.filter(user_id = self.author.id)
-
-        if len(publ) == 0:
-            pub = Publisher(user  = self.author)
-            pub.save()
-        
         instance  = self.Meta.model(**validated_data)
         instance.save()
         return instance
 
     class Meta:
         model = Post
-        fields = ['id', 'author', 'body', 'date']
+        fields = ('id', 'author', 'body', 'date')

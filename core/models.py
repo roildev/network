@@ -8,7 +8,7 @@ from pygments import highlight
 
 class Post(models.Model):
     body = models.CharField(max_length=255, verbose_name="post's text")
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='posts',  on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name="like_user", blank=True, through="LikePost")
 
@@ -23,7 +23,7 @@ class Post(models.Model):
         if len(publ) == 0:
             pub = Publisher(user  = self.author)
             pub.save()
-        super().save(*args, **kwargs)
+        super(Post, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         return "%s posted %s" % (self.author, self.date) 
@@ -58,3 +58,39 @@ class Publisher(models.Model):
 
     def __str__(self) -> str:
         return "Publisher %s" % self.user 
+
+class Follower(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return "%s follow to %s" % (self.user, self.publisher.user)
+
+    def save(self, *args, **kwargs):
+        if self.user == self.publisher.user:
+            print("You can't be publisher to you self")
+            return
+        else:
+            super().save(*args, **kwargs)
+    
+    def serialize_foll(self):
+        return {
+            "id": self.user.id,
+            "name": self.user.username,
+        }
+        
+    def serialize_pub(self):
+        return {
+            "id": self.publisher.user.id,
+            "name": self.publisher.user.username,
+        }
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    body = models.CharField(max_length=255)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return "%s commented: %s" % (self.user, self.body) 

@@ -23,7 +23,7 @@ def current_user(request):
     return Response(serializer.data)
 
 
-class UserList(APIView):
+class UserRegistre(APIView):
     """
     Create a new user. It's called 'UserList' because normally we'd have a get
     method here too, for retrieving a list of all User objects.
@@ -39,18 +39,27 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostList(generics.ListCreateAPIView):
+class PostList(generics.ListAPIView):
     # List all posts or create a new post
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+class PostCreate(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     def perform_create(self, serializer):
+        print(f"REQUEST USER: {self.request.user}")
         serializer.save(author=self.request.user)
+        
+        
+class PostDetail(generics.RetrieveAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
-class PostDetail(generics.RetrieveUpdateDestroyAPIView):
-
-    permission_classes = [permissions.IsAuthenticated]
-
+class PostEdit(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
