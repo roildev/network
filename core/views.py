@@ -9,7 +9,7 @@ from .serializers import UserSerializer, UserSerializerWithToken
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from core.models import Follower, Post
+from core.models import Follower, Post, Publisher
 from core.serializers import (
     PostSerializer,
     FollowerSerializer)
@@ -76,7 +76,28 @@ class FollowCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-class Followers(generics.ListAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    queryset = Follower.objects.all()
-    serializer_class = FollowerSerializer
+@api_view(['GET',])
+def followers_list(request):
+    try:
+        publisher = Publisher.objects.filter(user=request.user)[0]
+        print(f"PUBLISHER ID IS ---> {publisher.id}")
+    except Publisher.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    print(f"USER IS ---> {request.user.id}, BUT PUBLISHER ID IS ---> {publisher.id}")
+
+    try:
+        followers = Follower.objects.filter(publisher=publisher.id)
+        print(f"followers: {followers}")
+    except Follower.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    data = []
+    for index in range(0, len(followers)):
+        print(followers[index])
+        data.append(FollowerSerializer(followers[index]).data)
+
+    return Response(data)
+# class Followers(generics.ListAPIView):
+#     permission_classes = (permissions.IsAuthenticated,)
+#     queryset = Follower.objects.all()
+#     serializer_class = FollowerSerializer

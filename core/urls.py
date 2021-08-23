@@ -12,7 +12,7 @@ urlpatterns = [
     path('post-create/', views.PostCreate.as_view()), 
     
     path("follow/", views.FollowCreate.as_view()),
-    path("followers/", views.Followers.as_view()),
+    path("followers/", views.followers_list, name="followers"),
     
 #     path("unfollow", views.unfollow, name="unfollow"),
 

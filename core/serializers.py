@@ -6,10 +6,11 @@ from rest_framework.serializers import  (
     CharField,
     ReadOnlyField
 )
-
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
+
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 from core.models import Follower, Post, Publisher
 
 
@@ -59,6 +60,8 @@ class UserSerializerWithToken(ModelSerializer):
 class PostSerializer(ModelSerializer):
     
     author = ReadOnlyField(source='author.username')
+    likes_qty  = SerializerMethodField('get_likes_qty')
+    days_ago = SerializerMethodField('get_days_ago')
     
     def create(self, validated_data):
         instance  = self.Meta.model(**validated_data)
@@ -67,7 +70,13 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'body', 'date')
+        fields = ('id', 'author', 'body', 'likes_qty', 'days_ago')
+
+    def get_likes_qty(self, obj):
+        return obj.likepost_set.count()
+
+    def get_days_ago(self, obj):
+        return (now() - obj.date).days
 
 
 # FOLLOWER SERIALIZERS
