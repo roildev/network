@@ -12,6 +12,8 @@ urlpatterns = [
     path('post-create/', views.PostCreate.as_view()), 
     
     path("follow/", views.FollowCreate.as_view()),
+    path("followers/", views.Followers.as_view()),
+    
 #     path("unfollow", views.unfollow, name="unfollow"),
 
 #     path("profile/<int:user_id>", views.profile_page, name="profile_page"),
