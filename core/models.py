@@ -67,6 +67,11 @@ class Follower(models.Model):
         return "%s follow to %s" % (self.user, self.publisher.user)
 
     def save(self, *args, **kwargs):
+        # Check that current user is not follower of this publisher
+        follower = Follower.objects.filter(user=self.user, publisher=self.publisher)
+        if len(follower) != 0:
+            print("You have already followed")
+            return
         if self.user == self.publisher.user:
             print("You can't be publisher to you self")
             return

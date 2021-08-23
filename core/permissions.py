@@ -6,7 +6,6 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        print(f"IsOwnerOrReadOnly obj----> {obj}")
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
@@ -21,7 +20,6 @@ class FollowerIsNotPublisher(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        print(f"obj----> {obj}")
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:

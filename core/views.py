@@ -55,14 +55,9 @@ class PostCreate(generics.CreateAPIView):
     serializer_class = PostSerializer
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        
-class PostDetail(generics.RetrieveAPIView):
-    permission_classes = (permissions.AllowAny,)
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
 
-class PostEdit(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+class PostDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -76,14 +71,21 @@ class FollowCreate(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+@api_view(['DELETE'])
+def unfollow(request):
+    follower = Follower.objects.filter(user=request.user, publisher=(JSONParser().parse(request))['publisher'])[0]
+    
+    follower.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # print(f"request ---> {request.user}, request data {(JSONParser().parse(request))['publisher']}")
+
 @api_view(['GET',])
 def followers_list(request):
     try:
         publisher = Publisher.objects.filter(user=request.user)[0]
-        print(f"PUBLISHER ID IS ---> {publisher.id}")
     except Publisher.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    print(f"USER IS ---> {request.user.id}, BUT PUBLISHER ID IS ---> {publisher.id}")
 
     try:
         followers = Follower.objects.filter(publisher=publisher.id)
@@ -93,11 +95,7 @@ def followers_list(request):
 
     data = []
     for index in range(0, len(followers)):
-        print(followers[index])
         data.append(FollowerSerializer(followers[index]).data)
 
     return Response(data)
-# class Followers(generics.ListAPIView):
-#     permission_classes = (permissions.IsAuthenticated,)
-#     queryset = Follower.objects.all()
-#     serializer_class = FollowerSerializer
+
