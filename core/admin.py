@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Post, LikePost, Publisher, Follower
+from .models import Post, LikePost, Publisher, Follower, Comment
 
 class LikePostTabular(admin.TabularInline):
     model = LikePost
@@ -25,7 +25,13 @@ class FollowerAdmin(admin.ModelAdmin):
     class Meta:
         model = Follower
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id', '__str__']
+    class Meta:
+        model = Comment
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(LikePost, LikePostAdmin)
 admin.site.register(Publisher, PublisherAdmin)
 admin.site.register(Follower, FollowerAdmin)
+admin.site.register(Comment, CommentAdmin)

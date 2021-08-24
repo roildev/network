@@ -9,11 +9,17 @@ from .serializers import UserSerializer, UserSerializerWithToken
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-from core.models import Follower, Post, Publisher
+from core.models import Comment, Follower, Post, Publisher, LikePost
 from core.serializers import (
     PostSerializer,
-    FollowerSerializer)
-from core.permissions import IsOwnerOrReadOnly, FollowerIsNotPublisher
+    FollowerSerializer,
+    LikePostSerializer,
+    CommentSerializer)
+from core.permissions import (
+    IsOwnerOrReadOnly,
+    FollowerIsNotPublisher,
+    FollowOnlyOneTime,
+    LikeOnlyOneTime)
 
 
 @api_view(['GET'])
@@ -42,7 +48,7 @@ class UserRegistre(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# POST CLASS
+# POST CLASSES
 class PostList(generics.ListAPIView):
     # List all posts or create a new post
     permission_classes = (permissions.AllowAny,)
@@ -62,11 +68,11 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
 
 
-# FOLLOWING CLASS 
+# FOLLOWING CLASSES 
 class FollowCreate(generics.CreateAPIView):
-    permission_classes = (permissions.IsAuthenticated, FollowerIsNotPublisher,)
-    queryset = Follower.objects.all()
+    permission_classes = (permissions.IsAuthenticated, FollowerIsNotPublisher, FollowOnlyOneTime,)
     serializer_class = FollowerSerializer
+    queryset = Follower.objects.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -78,7 +84,6 @@ def unfollow(request):
     follower.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # print(f"request ---> {request.user}, request data {(JSONParser().parse(request))['publisher']}")
 
 @api_view(['GET',])
 def followers_list(request):
@@ -99,3 +104,37 @@ def followers_list(request):
 
     return Response(data)
 
+
+# LIKE CLASSES 
+class Like(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, LikeOnlyOneTime,)
+    queryset = LikePost.objects.all()
+    serializer_class = LikePostSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+@api_view(['DELETE'])
+def unlike(request):
+    try:
+        likePost = LikePost.objects.filter(user=request.user, post=(JSONParser().parse(request))['post'])[0]
+    except IndexError:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    likePost.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# COMMENT CLASSES 
+class CommentCreate(generics.ListCreateAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class CommentEditDelete(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer

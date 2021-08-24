@@ -13,14 +13,13 @@ urlpatterns = [
     path("follow/", views.FollowCreate.as_view()),
     path("unfollow/", views.unfollow, name="unfollow"),
     path("followers/", views.followers_list, name="followers"),
+
+    path("like/", views.Like.as_view(), name="like"),
+    path("unlike/", views.unlike, name="unlike"),
+
+    path("comment-create/", views.CommentCreate.as_view()),
+    path("comment-edit/<int:pk>", views.CommentEditDelete.as_view()),
     
-#     path("unfollow", views.unfollow, name="unfollow"),
-
-#     path("profile/<int:user_id>", views.profile_page, name="profile_page"),
-#     path("following", views.following, name="following"),
-
-#     path("like/<int:post_id>", views.like, name="like"),
-#     path("unlike/<int:post_id>", views.unlike, name="unlike"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

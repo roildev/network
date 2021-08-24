@@ -34,18 +34,6 @@ class LikePost(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if len(LikePost.objects.filter(user_id=self.user.id, post_id=self.post.id)) == 0:
-            super().save(*args, **kwargs)
-        else:
-            print("You can't like this post one more")
-            return
-
-    def serialize(self):
-        return {
-            "user_id": self.user.id,
-        }
-
     def __str__(self) -> str:
         return "%s liked post of: %s" % (self.user, self.post.author) 
 
@@ -66,31 +54,6 @@ class Follower(models.Model):
     def __str__(self) -> str:
         return "%s follow to %s" % (self.user, self.publisher.user)
 
-    def save(self, *args, **kwargs):
-        # Check that current user is not follower of this publisher
-        follower = Follower.objects.filter(user=self.user, publisher=self.publisher)
-        if len(follower) != 0:
-            print("You have already followed")
-            return
-        if self.user == self.publisher.user:
-            print("You can't be publisher to you self")
-            return
-        else:
-            super().save(*args, **kwargs)
-    
-    # def serialize_foll(self):
-    #     return {
-    #         "id": self.user.id,
-    #         "name": self.user.username,
-    #     }
-        
-    # def serialize_pub(self):
-    #     return {
-    #         "id": self.publisher.user.id,
-    #         "name": self.publisher.user.username,
-    #     }
-
-
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -98,4 +61,4 @@ class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return "%s commented: %s" % (self.user, self.body) 
+        return "%s commented post № %s: %s" % (self.user, self.post_id, self.body) 

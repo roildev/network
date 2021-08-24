@@ -11,7 +11,7 @@ from rest_framework_jwt.settings import api_settings
 
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-from core.models import Follower, Post, Publisher
+from core.models import Comment, Follower, Post, Publisher, LikePost
 
 
 # USER SERIALIZERS
@@ -56,12 +56,12 @@ class UserSerializerWithToken(ModelSerializer):
 
 
 # POST SERIALIZERS
-
 class PostSerializer(ModelSerializer):
     
     author = ReadOnlyField(source='author.username')
     likes_qty  = SerializerMethodField('get_likes_qty')
     days_ago = SerializerMethodField('get_days_ago')
+    comments = SerializerMethodField('get_comments')
     
     def create(self, validated_data):
         instance  = self.Meta.model(**validated_data)
@@ -70,18 +70,48 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'body', 'likes_qty', 'days_ago')
+        fields = ('id', 'author', 'body', 'likes_qty', 'days_ago', 'comments')
 
     def get_likes_qty(self, obj):
         return obj.likepost_set.count()
 
     def get_days_ago(self, obj):
         return (now() - obj.date).days
+    
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(post=obj.id)
+        print(f"obj --> {obj.id}, comments ---> {comments}")
+
+        if len(comments) > 0:
+            data = []
+            for comment in comments:
+                data.append(CommentSerializer(comment).data)            
+            return data
+        return []
 
 
 # FOLLOWER SERIALIZERS
-
 class FollowerSerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.id')
     class Meta:
         model = Follower
         fields = ('id', 'user', 'publisher')
+
+
+# LIKE SERIALIZERS
+class LikePostSerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.id')
+    class Meta:
+        model = LikePost
+        fields = ('id', 'user', 'post', 'date')
+
+class CommentSerializer(ModelSerializer):
+    user = ReadOnlyField(source='user.id')
+    days_ago = SerializerMethodField('get_days_ago')
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'user', 'post', 'body', 'days_ago')
+
+    def get_days_ago(self, obj):
+        return (now() - obj.date).days
