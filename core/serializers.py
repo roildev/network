@@ -18,7 +18,7 @@ from core.models import Comment, Follower, Post, Publisher, LikePost
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email')
+        fields = ('id', 'username')
 
 # I need this serializer with token only for sign up
 class UserSerializerWithToken(ModelSerializer):
@@ -60,6 +60,7 @@ class PostSerializer(ModelSerializer):
     
     author = ReadOnlyField(source='author.username')
     likes_qty  = SerializerMethodField('get_likes_qty')
+    likes  = SerializerMethodField('get_likes')
     days_ago = SerializerMethodField('get_days_ago')
     comments = SerializerMethodField('get_comments')
     
@@ -70,17 +71,25 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'body', 'likes_qty', 'days_ago', 'comments')
+        fields = ('id', 'author', 'body', 'likes_qty', 'likes', 'days_ago', 'comments')
 
     def get_likes_qty(self, obj):
         return obj.likepost_set.count()
+
+    def get_likes(self, obj):
+        likes = obj.likepost_set.all()
+        if len(likes) > 0:
+            data = []
+            for like in likes:
+                data.append(LikePostSerializer(like).data)            
+            return data
+        return []
 
     def get_days_ago(self, obj):
         return (now() - obj.date).days
     
     def get_comments(self, obj):
         comments = Comment.objects.filter(post=obj.id)
-        print(f"obj --> {obj.id}, comments ---> {comments}")
 
         if len(comments) > 0:
             data = []
@@ -103,7 +112,7 @@ class LikePostSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.id')
     class Meta:
         model = LikePost
-        fields = ('id', 'user', 'post', 'date')
+        fields = ('id', 'user')
 
 class CommentSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.id')
