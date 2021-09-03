@@ -5,7 +5,8 @@ import { Redirect } from 'react-router'
 import postData from '../../services/postData.js'
 import config from '../../config.js'
 
-const LoginForm = () => {
+const LoginForm = (props) => {
+    const handleAuth = props.handleAuth
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [userData, setUserData] = useState(false)
@@ -14,7 +15,6 @@ const LoginForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(username, password)
         const data = {
             username: username,
             password: password,
@@ -29,13 +29,12 @@ const LoginForm = () => {
     }
 
     const login = (user) => {
-        localStorage.setItem('userData', JSON.stringify(user))
-        setUserData(user)
+        handleAuth(user)
         setRedirect(true)
     }
 
     if (redirect) {
-       return <Redirect to="/" />;
+        return <Redirect to="/" />;
     }
 
     return (

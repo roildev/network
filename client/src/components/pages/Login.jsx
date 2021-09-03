@@ -1,8 +1,9 @@
 import LoginForm from '../auth/LoginForm'
 
-const LoginPage = () => {
+const LoginPage = (props) => {
+    const handleAuth = props.handleAuth
     return (
-        <LoginForm />
+        <LoginForm  handleAuth={handleAuth}/>
     )
 }
 

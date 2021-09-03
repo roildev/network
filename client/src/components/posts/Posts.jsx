@@ -16,7 +16,6 @@ const Posts = (props) => {
             .then(response => response.json())
             .then(
                 (result) => {
-                    console.log(result)
                     setIsLoaded(true);
                     setPosts(result)
                 },

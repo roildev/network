@@ -1,6 +1,6 @@
 import React from "react";
+import { useState } from "react";
 import {
-  BrowserRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
@@ -18,38 +18,45 @@ import FormPost from './components/posts/FormPost.jsx';
 
 export default function App() {
   console.log('RENDER APP')
-  const userData = !!localStorage.getItem('userData') ?
-    JSON.parse(localStorage.getItem('userData')) : false
+
+  const [userData, setUserData] = useState(!!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : false)
+
+  const userToLocalStorage = (user) => {
+    localStorage.setItem('userData', JSON.stringify(user))
+  }
+
+  const handleAuth = (user) => {
+    setUserData(user)
+    userToLocalStorage(user)
+  }
   return (
-    <Router>
       <div>
-        <Header userData={userData} />
+        <Header handleAuth={handleAuth} userData={userData}/>
 
         <main className="flex-shrink-0 mt-5">
           <div className="container">
             <Switch>
-              <Route path="/registration">
-                <RegisterPage />
-              </Route>
+              <Route path="/registration" component={RegisterPage} />
               <Route path="/login">
-                <LoginPage />
+                <LoginPage handleAuth={handleAuth}/>
               </Route>
-              <Route path="/following">
-                <FollowingPage />
-              </Route>
-              <Route path="/">
-                <div>
-                  {!!userData &&
-                    <FormPost />
-                  }
+              
+              
+              <Route path="/" exact>
+                {!!userData ? 
+                  <div>
+                    <FormPost/>
+                    <Posts userData={userData}/>
+                  </div> : 
                   <Posts userData={userData}/>
-                </div>
+                }
               </Route>
+              {!!userData ? <Route path="/following" component={FollowingPage}/> : <Route render={()=> <h1>You must login</h1>} /> }
+              <Route render={()=> <h1>404 Not Found</h1>} />
             </Switch>
           </div>
         </main>
       </div>
-    </Router>
   );
 }
 
