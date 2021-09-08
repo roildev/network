@@ -1,37 +1,12 @@
 import {useEffect, useState} from 'react'
+import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 
 const Post = (props) => {
+    console.log('RENDER POST')
 
     const postDate = props.post
 
     const [likes, setLikes] = useState(+postDate.likes_qty)
-    // let liked = false
-    // if (props.userData) {
-    //     liked = props.post.includes(props.userData.id)
-    // }
-
-    // // Check if user liked this post yet
-
-
-    // let currentUserLiked = false,
-    //     usersLiked = postDate.likes_user_ids.map(id => id.user_id)
-    // const currentUserId = JSON.parse(localStorage.getItem("userData")).id
-    
-    // currentUserLiked = usersLiked.includes(currentUserId)
-
-    // // useEffect(() => {
-    // //     if (likes > +postDate.likes_qty && currentUserLiked) {
-    // //         fetch(`http://127.0.0.1:8000/like/${+postDate.id}`)
-    // //             .then(res => res.json())
-    // //             .then(result => console.log(result))
-    // //     } else {
-    // //         fetch(`http://127.0.0.1:8000/unlike/${+postDate.id}`)
-    // //             .then(res => res.json())
-    // //             .then(result => console.log(result))
-    // //    }
-    // //    console.log("like", likes, "+postDate.likes_qty", +postDate.likes_qty, "currentUserLiked", currentUserLiked)
-
-    // // })
 
 
     const handleLike = () => {
@@ -53,10 +28,6 @@ const Post = (props) => {
         diffOfDate = `${postDate.days_ago} days ago`
     }
 
-    // // const doLike = () => {setLike(like +1)}
-    
-
-    // console.log("RENDER POST")
     return (
         <div className="posts__item card">
             <div className="card-header">
@@ -70,12 +41,8 @@ const Post = (props) => {
             <div className="card-footer text-muted">
                 <button type="button"
                     className="btn btn-secondary" onClick={handleLike}>
-                    <i className="bi bi-hand-thumbs-up"></i>
+                    <ThumbUpAltIcon />
                 </button>
-                {/* <button type="button"
-                    className={`btn ${currentUserLiked ? "btn-outline-danger" : "btn-secondary"}`} onClick={handleLike}>
-                    <i className="bi bi-hand-thumbs-up"></i>
-                </button> */}
                 <span style={{marginLeft: '10px'}}>{postDate.likes_qty}</span>
             </div>
         </div>

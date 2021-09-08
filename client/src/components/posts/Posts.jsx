@@ -6,12 +6,21 @@ import config from '../../config.js'
 
 
 const Posts = (props) => {
-
+    console.log('RENDER POSTS')
+    console.log('props', props)
+    const [userData, setUserData] = useState(props.userData);
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [posts, setPosts] = useState(null);
+    const [postSubmited, setPostSubmited] = useState(false)
+    console.log(props.postSubmited)
+
+    if (props.postSubmited) {
+        setPostSubmited(true)
+    }
 
     useEffect(() => {
+        console.log('INIT')
         fetch(`${config.base_url}/core/posts/`)
             .then(response => response.json())
             .then(
@@ -24,7 +33,7 @@ const Posts = (props) => {
                     setError(error);
                 }
             )
-    }, [])
+    }, [postSubmited])
 
     if (error) {
         return <div>Ошибка: {error.message}</div>;
@@ -35,7 +44,7 @@ const Posts = (props) => {
             return (
                 <div className="posts col-md-7 offset-2">
                     {posts.map(post => {
-                        return <Post userData={props.userData} key={post.id} post={post}/>
+                        return <Post userData={userData} key={post.id} post={post}/>
                     })}
                 </div>
             )

@@ -1,4 +1,4 @@
-import LoginForm from '../auth/LoginForm'
+import LoginForm from '../components/auth/LoginForm'
 
 const LoginPage = (props) => {
     const handleAuth = props.handleAuth

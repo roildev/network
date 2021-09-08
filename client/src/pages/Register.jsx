@@ -1,4 +1,4 @@
-import RegisterForm from '../auth/RegisterForm.jsx' 
+import RegisterForm from '../components/auth/RegisterForm.jsx' 
 
 const RegisterPage = () => {
     console.log("Render Register Page")
