@@ -6,12 +6,11 @@ import postData from '../../services/postData.js'
 import config from '../../config.js'
 
 const LoginForm = (props) => {
+    console.log('RENDER LOGIN')
     const handleAuth = props.handleAuth
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [userData, setUserData] = useState(false)
     const [redirect, setRedirect] = useState(false)
-    console.log('RENDER LOGIN')
 
     const handleSubmit = (event) => {
         event.preventDefault();

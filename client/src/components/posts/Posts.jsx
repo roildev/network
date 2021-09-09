@@ -1,26 +1,19 @@
 import {useState, useEffect} from 'react'
 
 import Post from './Post.jsx'
+import FormPost from './FormPost';
 import config from '../../config.js'
 
 
 
 const Posts = (props) => {
-    console.log('RENDER POSTS')
-    console.log('props', props)
-    const [userData, setUserData] = useState(props.userData);
+    // console.log('RENDER POSTS')
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [posts, setPosts] = useState(null);
-    const [postSubmited, setPostSubmited] = useState(false)
-    console.log(props.postSubmited)
-
-    if (props.postSubmited) {
-        setPostSubmited(true)
-    }
+    const [posts, setPosts] = useState([]);
+    const [postSubmited, setPostSubmited] = useState({})
 
     useEffect(() => {
-        console.log('INIT')
         fetch(`${config.base_url}/core/posts/`)
             .then(response => response.json())
             .then(
@@ -34,19 +27,34 @@ const Posts = (props) => {
                 }
             )
     }, [postSubmited])
+    
+    const handlePostSubmited = (post) => {setPostSubmited(post)}
 
     if (error) {
         return <div>Ошибка: {error.message}</div>;
     } else if (!isLoaded) {
         return <div>Загрузка...</div>;
     } else {
-        if (posts != null) {
+        if (posts.length > 0) {
             return (
-                <div className="posts col-md-7 offset-2">
-                    {posts.map(post => {
-                        return <Post userData={userData} key={post.id} post={post}/>
-                    })}
-                </div>
+                <>
+                    {!!props.userData ? 
+                        <>
+                            <FormPost handlePostSubmited={handlePostSubmited}/>
+                            <div className="posts col-md-7 offset-2">
+                                {posts.map(post => {
+                                    return <Post userData={props.userData} key={post.id} post={post}/>
+                                })}
+                            </div>
+                        </>
+                        :
+                        <div className="posts col-md-7 offset-2">
+                            {posts.map(post => {
+                                return <Post userData={props.userData} key={post.id} post={post}/>
+                            })}
+                        </div>
+                    }
+                </>
             )
         } else {
             return <div>Загрузка...</div>;

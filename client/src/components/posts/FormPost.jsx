@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Redirect } from 'react-router'
 
 import postData from '../../services/postData.js'
 import config from '../../config.js'
@@ -21,9 +20,8 @@ const FormPost = (props) => {
         postData(`${config.base_url}/core/post-create/`, data, userData.token)
         .then((response) => {
             if (response) {
-                console.log(response)
                 setPostText('')
-                props.handlePostSubmited()
+                props.handlePostSubmited(response)
             }
         })
     }

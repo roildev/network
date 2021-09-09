@@ -60,7 +60,7 @@ class PostSerializer(ModelSerializer):
     
     author = ReadOnlyField(source='author.username')
     likes_qty  = SerializerMethodField('get_likes_qty')
-    likes  = SerializerMethodField('get_likes')
+    likes_users_ids  = SerializerMethodField('get_likes_users_ids')
     days_ago = SerializerMethodField('get_days_ago')
     comments = SerializerMethodField('get_comments')
     
@@ -71,17 +71,17 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'body', 'likes_qty', 'likes', 'days_ago', 'comments')
+        fields = ('id', 'author', 'body', 'likes_qty', 'likes_users_ids', 'days_ago', 'comments')
 
     def get_likes_qty(self, obj):
         return obj.likepost_set.count()
 
-    def get_likes(self, obj):
+    def get_likes_users_ids(self, obj):
         likes = obj.likepost_set.all()
         if len(likes) > 0:
             data = []
             for like in likes:
-                data.append(LikePostSerializer(like).data)            
+                data.append(LikePostSerializer(like).data['user'])            
             return data
         return []
 
@@ -112,7 +112,7 @@ class LikePostSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.id')
     class Meta:
         model = LikePost
-        fields = ('id', 'user')
+        fields = ('id', 'user', 'post')
 
 class CommentSerializer(ModelSerializer):
     user = ReadOnlyField(source='user.id')
