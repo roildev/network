@@ -7,6 +7,7 @@ urlpatterns = [
     path('register/', views.UserRegistre.as_view()),
 
     path('posts/', views.PostList.as_view()),
+    path('posts/<int:user_id>', views.PostListUser.as_view()),
     path('post/<int:pk>', views.PostDetail.as_view()),
     path('post-create/', views.PostCreate.as_view()), 
     

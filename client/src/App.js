@@ -12,6 +12,7 @@ import RegisterPage from './pages/Register.jsx';
 import LoginPage from './pages/Login.jsx';
 import FollowingPage from './pages/Following.jsx';
 import HomePage from './pages/Home.jsx';
+import ProfilePage from './pages/ProfilePage.jsx'
 
 import Header from './components/Header.jsx';
 
@@ -44,7 +45,13 @@ export default function App() {
               <Route path="/" exact>
                 <HomePage userData={userData}/>
               </Route>
-              {!!userData ? <Route path="/following" component={FollowingPage}/> : <Route render={()=> <h1>You must login</h1>} /> }
+              {!!userData ? 
+                <>
+                  <Route path="/following" component={FollowingPage}/>
+                  <Route path="/profile" >
+                    <ProfilePage userData={userData} />
+                  </Route>
+                </>: <Route render={()=> <h1>You must login</h1>} /> }
               <Route render={()=> <h1>404 Not Found</h1>} />
             </Switch>
           </div>

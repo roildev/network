@@ -24,3 +24,20 @@
 .posts__item {
   margin-top: 1rem;
 }
+
+/* ======== Profile Page ======== */
+
+.item {
+  margin-bottom: 40px;
+  display: flex;
+}
+.item__logo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 7px solid #212529;
+}
+.item__title {
+  margin-left: 30px;
+}

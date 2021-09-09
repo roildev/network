@@ -1,4 +1,5 @@
-import {useState} from 'react'
+import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 
 import postData from '../../services/postData.js'
@@ -9,10 +10,10 @@ const Post = (props) => {
     console.log('RENDER POST')
 
     const postInfo = props.post
-    const userId = props.userData.user.id
+    const userId = !!props.userData ? props.userData.user.id : false
 
     const [likes, setLikes] = useState(+postInfo.likes_qty)
-    const [currentUserLikedPost, setCurrentUserLikedPost] = useState(postInfo.likes_users_ids.includes(userId))
+    const [currentUserLikedPost, setCurrentUserLikedPost] = useState(!!props.userData ? postInfo.likes_users_ids.includes(userId) : false)
 
     const handleLike = () => {
         const data = { "post": props.post.id }
@@ -34,7 +35,6 @@ const Post = (props) => {
                 data,
                 props.userData.token
             ).then(response => {
-                console.log(response)
                 setLikes(likes + 1)
                 setCurrentUserLikedPost(true)
             })
@@ -53,8 +53,9 @@ const Post = (props) => {
     return (
         <div className="posts__item card">
             <div className="card-header">
-                <a href="google.com" className="link-secondary">{postInfo.author.charAt(0).toUpperCase() + postInfo.author.slice(1)}</a> 
-                <strong>{postInfo.id}</strong>
+                <NavLink to={`/profile?username=${postInfo.author}&user_id=${postInfo.author_id}`} className="link-secondary">      
+                    {postInfo.author.charAt(0).toUpperCase() + postInfo.author.slice(1)}
+                </NavLink>
                 
                 <span className="text-muted" style={{float: 'right'}}>{diffOfDate}</span>
             </div>

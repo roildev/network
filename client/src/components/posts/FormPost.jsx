@@ -33,7 +33,7 @@ const FormPost = (props) => {
                     <textarea value={postText} onChange={handleTextPost} className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                 </div>
                 <div className="col-12 form__control">
-                    <button type="submit" className="btn btn-outline-dark">Post</button>
+                    <button type="submit" className="btn btn-outline-dark">Add Post</button>
                 </div>
             </form>
         </div>

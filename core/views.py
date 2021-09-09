@@ -55,6 +55,15 @@ class PostList(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+class PostListUser(generics.ListAPIView):
+    # List all posts or create a new post
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PostSerializer
+    def get_queryset(self):
+        user = self.kwargs['user_id']
+        print(f"user ---> {user}")
+        return Post.objects.filter(author=user)
+
 class PostCreate(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Post.objects.all()

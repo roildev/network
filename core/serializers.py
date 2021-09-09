@@ -59,6 +59,7 @@ class UserSerializerWithToken(ModelSerializer):
 class PostSerializer(ModelSerializer):
     
     author = ReadOnlyField(source='author.username')
+    author_id = ReadOnlyField(source='author.id')
     likes_qty  = SerializerMethodField('get_likes_qty')
     likes_users_ids  = SerializerMethodField('get_likes_users_ids')
     days_ago = SerializerMethodField('get_days_ago')
@@ -71,7 +72,7 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'body', 'likes_qty', 'likes_users_ids', 'days_ago', 'comments')
+        fields = ('id', 'author', 'author_id', 'body', 'likes_qty', 'likes_users_ids', 'days_ago', 'comments')
 
     def get_likes_qty(self, obj):
         return obj.likepost_set.count()

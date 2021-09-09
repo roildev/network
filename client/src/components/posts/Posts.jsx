@@ -7,14 +7,14 @@ import config from '../../config.js'
 
 
 const Posts = (props) => {
-    // console.log('RENDER POSTS')
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState(null);
     const [postSubmited, setPostSubmited] = useState({})
+    const getPostsUrl = props.by === 'all' ? `${config.base_url}/core/posts/` : `${config.base_url}/core/posts/${props.by}`
 
     useEffect(() => {
-        fetch(`${config.base_url}/core/posts/`)
+        fetch(getPostsUrl)
             .then(response => response.json())
             .then(
                 (result) => {
@@ -35,7 +35,7 @@ const Posts = (props) => {
     } else if (!isLoaded) {
         return <div>Загрузка...</div>;
     } else {
-        if (posts.length > 0) {
+        if (posts !== null) {
             return (
                 <>
                     {!!props.userData ? 
