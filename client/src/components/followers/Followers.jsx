@@ -6,17 +6,28 @@ import getData from '../../services/getData.js'
 
 
 const Followers = (props) => {
+    console.log('RENDER FOLLOWERS')
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [followersList, setFollowersList] = useState(null)
+    const [url, setUrl] = useState(`${config.base_url}/core/followers/${props.by}`)
+    const [token, setToken] = useState(!!props.userData ? props.userData.token : false)
+    
+    if (url !== `${config.base_url}/core/followers/${props.by}`) {
+        setUrl(`${config.base_url}/core/followers/${props.by}`)
+    }
 
-    const token = props.userData.token
+    if (!!token && token !== props.userData.token) {
+        setToken(props.userData.token)
+    }
+
     
     useEffect(() => {
-        getData(`${config.base_url}/core/followers/${props.by}`, token)
+        getData(url, token)
         .then(
             (response) => {
                 setIsLoaded(true);
+                console.log('FALLOWERS --> ',response )
                 setFollowersList(response)
             },
             (error) => {
@@ -24,7 +35,7 @@ const Followers = (props) => {
                 setError(error);
             }
         )
-    }, [])
+    }, [url, token])
 
     if (error) {
         return <div>Ошибка: {error.message}</div>;
@@ -36,8 +47,6 @@ const Followers = (props) => {
                 <div className="list-group">
                     {followersList.map(follower => {
                         return <NavLink 
-                        strict 
-                            exact
                             to={`/profile/${follower.follower_id}?username=${follower.follower}`}
                             key={follower.id}
                             className="list-group-item list-group-item-action">

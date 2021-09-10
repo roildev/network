@@ -10,11 +10,17 @@ const Posts = (props) => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [posts, setPosts] = useState(null);
+    const [postsBy, setPostsBy] = useState(props.by)
     const [postSubmited, setPostSubmited] = useState({})
-    const getPostsUrl = props.by === 'all' ? `${config.base_url}/core/posts/` : `${config.base_url}/core/posts/${props.by}`
+    const [postsUrl, setPostsUrl] = useState(props.by === 'all' ? `${config.base_url}/core/posts/` : `${config.base_url}/core/posts/${props.by}`)
+
+    if (postsBy !== props.by) {
+        setPostsBy(props.by)
+        setPostsUrl(props.by === 'all' ? `${config.base_url}/core/posts/` : `${config.base_url}/core/posts/${props.by}`)
+    }
 
     useEffect(() => {
-        fetch(getPostsUrl)
+        fetch(postsUrl)
             .then(response => response.json())
             .then(
                 (result) => {
@@ -26,7 +32,7 @@ const Posts = (props) => {
                     setError(error);
                 }
             )
-    }, [postSubmited])
+    }, [postSubmited, postsBy, postsUrl])
     
     const handlePostSubmited = (post) => {setPostSubmited(post)}
 
