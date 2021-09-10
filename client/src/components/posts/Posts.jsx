@@ -38,7 +38,7 @@ const Posts = (props) => {
         if (posts !== null) {
             return (
                 <>
-                    {!!props.userData ? 
+                    {!!props.userData && props.by === 'all' ? 
                         <>
                             <FormPost handlePostSubmited={handlePostSubmited}/>
                             <div className="posts col-md-7 offset-2">

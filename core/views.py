@@ -61,7 +61,6 @@ class PostListUser(generics.ListAPIView):
     serializer_class = PostSerializer
     def get_queryset(self):
         user = self.kwargs['user_id']
-        print(f"user ---> {user}")
         return Post.objects.filter(author=user)
 
 class PostCreate(generics.CreateAPIView):
@@ -113,6 +112,29 @@ def followers_list(request):
 
     return Response(data)
 
+
+@api_view(['GET',])
+def followers_list_user(request, user_id):
+    print("followers_list_user")
+    try:
+        publisher = Publisher.objects.filter(user=user_id)[0]
+        print(f"publisher ---> {publisher}")
+    except Publisher.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        followers = Follower.objects.filter(publisher=publisher.id)
+        print(f"followers: {followers}")
+    except Follower.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    data = []
+    for index in range(0, len(followers)):
+        data.append(FollowerSerializer(followers[index]).data)
+
+    print(f"DATA ---> {data}")
+
+    return Response(data)
 
 # LIKE CLASSES 
 class Like(generics.CreateAPIView):

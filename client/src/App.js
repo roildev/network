@@ -17,9 +17,9 @@ import ProfilePage from './pages/ProfilePage.jsx'
 import Header from './components/Header.jsx';
 
 export default function App() {
-  console.log('RENDER APP')
 
   const [userData, setUserData] = useState(!!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : false)
+  const [userSubscribed, setUserSubscribed] = useState(false)
 
   const userToLocalStorage = (user) => {
     localStorage.setItem('userData', JSON.stringify(user))
@@ -48,8 +48,9 @@ export default function App() {
               {!!userData ? 
                 <>
                   <Route path="/following" component={FollowingPage}/>
-                  <Route path="/profile" >
-                    <ProfilePage userData={userData} />
+                  {/* <Route path={`/profile/${userData.user.id}?${userData.user.username}`} > */}
+                  <Route path="/profile/:id" >
+                    <ProfilePage userSubscribed={userSubscribed} userData={userData} />
                   </Route>
                 </>: <Route render={()=> <h1>You must login</h1>} /> }
               <Route render={()=> <h1>404 Not Found</h1>} />

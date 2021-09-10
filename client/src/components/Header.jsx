@@ -29,7 +29,7 @@ const Header = (props) => {
                     <ul className="navbar-nav mr-auto">
                         {!!userData && 
                             <li className="nav-item">
-                            <NavLink to="/profile" className="nav-link"><strong>{userData.user.username}</strong></NavLink>
+                            <NavLink to={`/profile/${userData.user.id}?username=${userData.user.username}`} className="nav-link"><strong>{userData.user.username}</strong></NavLink>
                             </li>
                         }
                         <li className="nav-item">

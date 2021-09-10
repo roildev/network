@@ -53,8 +53,8 @@ const Post = (props) => {
     return (
         <div className="posts__item card">
             <div className="card-header">
-                <NavLink to={`/profile?username=${postInfo.author}&user_id=${postInfo.author_id}`} className="link-secondary">      
-                    {postInfo.author.charAt(0).toUpperCase() + postInfo.author.slice(1)}
+                <NavLink to={`/profile/${postInfo.author_id}?username=${postInfo.author}`} className="link-secondary">      
+                    {postInfo.author.charAt(0).toUpperCase() + postInfo.author.slice(1)} <strong>{postInfo.author_id}</strong>
                 </NavLink>
                 
                 <span className="text-muted" style={{float: 'right'}}>{diffOfDate}</span>

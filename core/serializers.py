@@ -102,10 +102,11 @@ class PostSerializer(ModelSerializer):
 
 # FOLLOWER SERIALIZERS
 class FollowerSerializer(ModelSerializer):
-    user = ReadOnlyField(source='user.id')
+    follower = ReadOnlyField(source='user.username')
+    follower_id = ReadOnlyField(source='user.id')
     class Meta:
         model = Follower
-        fields = ('id', 'user', 'publisher')
+        fields = ('id', 'follower', 'follower_id')
 
 
 # LIKE SERIALIZERS

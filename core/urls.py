@@ -14,6 +14,7 @@ urlpatterns = [
     path("follow/", views.FollowCreate.as_view()),
     path("unfollow/", views.unfollow, name="unfollow"),
     path("followers/", views.followers_list, name="followers"),
+    path("followers/<int:user_id>", views.followers_list_user, name="followers_user"),
 
     path("like/", views.Like.as_view(), name="like"),
     path("unlike/", views.unlike, name="unlike"),
