@@ -19,7 +19,7 @@ import Header from './components/Header.jsx';
 export default function App() {
 
   const [userData, setUserData] = useState(!!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')) : false)
-  const [userSubscribed, setUserSubscribed] = useState(false)
+  
 
   const userToLocalStorage = (user) => {
     localStorage.setItem('userData', JSON.stringify(user))
@@ -29,6 +29,8 @@ export default function App() {
     setUserData(user)
     userToLocalStorage(user)
   }
+
+
   return (
       <div>
         <Header handleAuth={handleAuth} userData={userData}/>
@@ -50,7 +52,7 @@ export default function App() {
                   <Route path="/following" component={FollowingPage}/>
                   {/* <Route path={`/profile/${userData.user.id}?${userData.user.username}`} > */}
                   <Route path="/profile/:id" >
-                    <ProfilePage userSubscribed={userSubscribed} userData={userData} />
+                    <ProfilePage userData={userData} />
                   </Route>
                 </>: <Route render={()=> <h1>You must login</h1>} /> }
               <Route render={()=> <h1>404 Not Found</h1>} />
