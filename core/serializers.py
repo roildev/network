@@ -16,9 +16,19 @@ from core.models import Comment, Follower, Post, Publisher, LikePost
 
 # USER SERIALIZERS
 class UserSerializer(ModelSerializer):
+    publisher_id = SerializerMethodField('get_publisher_id')
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'publisher_id')
+
+
+    def get_publisher_id(self, obj):
+        try:
+            pub = Publisher.objects.filter(user = obj.id)[0]
+            return pub.id
+        except IndexError:
+            # This User isn't a publisher
+            return False
 
 # I need this serializer with token only for sign up
 class UserSerializerWithToken(ModelSerializer):
@@ -64,6 +74,7 @@ class PostSerializer(ModelSerializer):
     likes_users_ids  = SerializerMethodField('get_likes_users_ids')
     days_ago = SerializerMethodField('get_days_ago')
     comments = SerializerMethodField('get_comments')
+    publisher_id = SerializerMethodField('get_publisher_id')    
     
     def create(self, validated_data):
         instance  = self.Meta.model(**validated_data)
@@ -72,7 +83,7 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'author', 'author_id', 'body', 'likes_qty', 'likes_users_ids', 'days_ago', 'comments')
+        fields = ('id', 'author', 'author_id', 'publisher_id', 'body', 'likes_qty', 'likes_users_ids', 'days_ago', 'comments')
 
     def get_likes_qty(self, obj):
         return obj.likepost_set.count()
@@ -99,14 +110,33 @@ class PostSerializer(ModelSerializer):
             return data
         return []
 
+    def get_publisher_id(self, obj):
+        pub = Publisher.objects.filter(user = obj.author)[0]
+        return pub.id
+
 
 # FOLLOWER SERIALIZERS
 class FollowerSerializer(ModelSerializer):
     follower = ReadOnlyField(source='user.username')
     follower_id = ReadOnlyField(source='user.id')
+    publisher_id = SerializerMethodField('get_publisher_id')
     class Meta:
         model = Follower
-        fields = ('id', 'follower', 'follower_id')
+        fields = ('id', 'follower', 'follower_id', 'publisher_id')
+
+    def get_publisher_id(self, obj):
+        try:
+            pub = Publisher.objects.filter(user = obj.user.id)[0]
+            return pub.id
+        except IndexError:
+            # This follower isn't a publisher
+            return False
+class CreateFollowerSerializer(ModelSerializer):
+    follower = ReadOnlyField(source='user.username')
+    class Meta:
+        model = Follower
+        fields = ('id', 'follower', 'publisher')
+
 
 
 # LIKE SERIALIZERS

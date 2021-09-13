@@ -7,8 +7,6 @@ import deleteData from '../../services/deleteData.js'
 import config from '../../config.js'
 
 const Post = (props) => {
-    console.log('RENDER POST')
-
     const postInfo = props.post
     const userId = !!props.userData ? props.userData.user.id : false
 
@@ -53,7 +51,7 @@ const Post = (props) => {
     return (
         <div className="posts__item card">
             <div className="card-header">
-                <NavLink to={`/profile/${postInfo.author_id}?username=${postInfo.author}`} className="link-secondary">      
+                <NavLink to={`/profile/${postInfo.author_id}?username=${postInfo.author}&pub_id=${postInfo.publisher_id}`} className="link-secondary">      
                     {postInfo.author.charAt(0).toUpperCase() + postInfo.author.slice(1)} <strong>{postInfo.author_id}</strong>
                 </NavLink>
                 

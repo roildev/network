@@ -21,7 +21,7 @@ class Post(models.Model):
         publ = Publisher.objects.filter(user_id = self.author.id)
 
         if len(publ) == 0:
-            pub = Publisher(user  = self.author)
+            pub = Publisher(user = self.author)
             pub.save()
         super(Post, self).save(*args, **kwargs)
 

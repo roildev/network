@@ -9,10 +9,12 @@ from .serializers import UserSerializer, UserSerializerWithToken
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
+import json
 from core.models import Comment, Follower, Post, Publisher, LikePost
 from core.serializers import (
     PostSerializer,
     FollowerSerializer,
+    CreateFollowerSerializer,
     LikePostSerializer,
     CommentSerializer)
 from core.permissions import (
@@ -79,11 +81,16 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
 # FOLLOWING CLASSES 
 class FollowCreate(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated, FollowerIsNotPublisher, FollowOnlyOneTime,)
-    serializer_class = FollowerSerializer
+    serializer_class = CreateFollowerSerializer
     queryset = Follower.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        publisher_id = (JSONParser().parse(self.request))['publisher']
+        try:
+            publisher = Publisher.objects.get(pk=publisher_id)
+            serializer.save(user=self.request.user, publisher=publisher)
+        except Publisher.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['DELETE'])
 def unfollow(request):
