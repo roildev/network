@@ -40,7 +40,7 @@ const ProfilePage = (props) => {
                 setError(error);
             }
         )
-    }, [url, token, props.userData])
+    }, [url, token, props.userData, userSubscribed])
     
     
     if (url !== `${config.base_url}/core/followers/${userId}`) {
@@ -90,7 +90,12 @@ const ProfilePage = (props) => {
         <div className="container">
             <div className="row">
             <div className="col-md-3">
-                <p className="fs-4">Followers</p>
+                <div className="d-flex justify-content-between align-items-center">
+                    <p className="fs-5 mb-3">Followers</p>
+                    {!!followersList ?
+                        <span className="mb-3 badge bg-primary rounded-pill">{followersList.length}</span>
+                    : <></>}
+                </div>
                 <Followers isLoaded={isLoaded} followersList={followersList} error={error}/>
             </div>
             <div className="col-md-8">
