@@ -44,9 +44,9 @@ const Posts = (props) => {
                     setIsLoaded(true);
                     setPostData(result)
                     if (result.results !== null) {
+                        console.log(result.results)
                         if (posts !== null) {
                             setPosts([...posts, ...result.results])
-                            console.log(postData)
                         } else { setPosts(result.results) }
                     }
                 },
@@ -57,7 +57,11 @@ const Posts = (props) => {
             )            
     }, [postSubmited, postsBy, postsUrl])
     
-    const handlePostSubmited = (post) => {setPostSubmited(post)}
+    const handlePostSubmited = (post) => {
+        setPosts(null)
+        setPostSubmited(post)
+        setPostsUrl(props.by === 'all' ? `${config.base_url}/core/posts/?limit=10&offset=0` : `${config.base_url}/core/posts/${props.by}?limit=10&offset=0`)
+    }
 
     if (error) {
         return <div>Ошибка: {error.message}</div>;
@@ -67,7 +71,8 @@ const Posts = (props) => {
         if (posts !== null) {
             return (
                 <>
-                    {!!props.userData && props.by === 'all' ? 
+                    {(!!props.userData && props.by === 'all') ||
+                    (!!props.userData && postAuthor === props.userData.user.username) ? 
                         <>
                             <FormPost handlePostSubmited={handlePostSubmited}/>
                             <div className="posts col-md-7 offset-2">
