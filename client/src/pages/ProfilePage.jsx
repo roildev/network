@@ -109,7 +109,7 @@ const ProfilePage = (props) => {
                     </div>
                     : <></>          
                 }
-                <Posts by={userId} userData={props.userData}/>
+                <Posts username={username} by={userId} userData={props.userData}/>
             </div>
             <div className="col-md-1"><h1>Right Bar</h1></div>
             </div>
