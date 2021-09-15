@@ -9,6 +9,11 @@ import deleteData from '../../services/deleteData.js'
 import putData from '../../services/putData.js'
 import config from '../../config.js'
 
+// only post owner can edit your own post
+const checkPermissionForEditPost = (postAuthorId, currentUserId) => {
+    return postAuthorId === currentUserId
+}
+
 const Post = (props) => {
     const postInfo = props.post
     const userId = !!props.userData ? props.userData.user.id : false
@@ -17,7 +22,9 @@ const Post = (props) => {
     const [currentUserLikedPost, setCurrentUserLikedPost] = useState(!!props.userData ? postInfo.likes_users_ids.includes(userId) : false)
     const [editMode, setEditMode] = useState(false)
     const [postBody, setPostBody] = useState(postInfo.body)
-    const [hasPermissionToChange, setHasPermissionToChange] = useState(false)
+
+    // check that onli post owner can edit post
+    const [hasPermissionToChange, setHasPermissionToChange] = useState(!!props.userData ? checkPermissionForEditPost(postInfo.author_id, props.userData.user.id) : false)
 
     const handleLike = () => {
         const data = { "post": props.post.id }
@@ -45,18 +52,15 @@ const Post = (props) => {
         }
     }
 
-
-    const handlePostEdition = (e) => {
-        setPostBody(e.target.value)
-        console.log(postBody)
-    }
-
     const handleSavePost = () => {
-        console.log('Post Saved')
         setEditMode(false)
         const data = { "body": postBody }
         putData(`${config.base_url}/core/post/${postInfo.id}`, data, props.userData.token)
-        .then(res => console.log(res))
+            .then(res => {
+                console.log(res)
+                props.handleShowToast()
+            })
+            .catch(err => {throw new Error(err)})
     }
 
     let diffOfDate;
@@ -83,7 +87,7 @@ const Post = (props) => {
                     :
                     <input type="text"
                         className="form-control"
-                        onChange={handlePostEdition}
+                        onChange={(e) => {setPostBody(e.target.value)}}
                         value={postBody} />
                 }
             </div>

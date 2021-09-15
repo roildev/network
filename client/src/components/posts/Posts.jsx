@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 
 import Post from './Post.jsx'
 import FormPost from './FormPost';
+import Toast from '../Toast'
 import config from '../../config.js'
 import getData from '../../services/getData.js'
 
@@ -16,6 +17,7 @@ const Posts = (props) => {
     const [postSubmited, setPostSubmited] = useState({})
     const [postsUrl, setPostsUrl] = useState(props.by === 'all' ? `${config.base_url}/core/posts/?limit=10&offset=0` : `${config.base_url}/core/posts/${props.by}?limit=10&offset=0`)
     const [postAuthor, setPostAuthor] = useState('')
+    const [showToast, setShowToast] = useState(false)
 
     if (postAuthor !== props.username) {
         setPostAuthor(props.username)
@@ -44,7 +46,6 @@ const Posts = (props) => {
                     setIsLoaded(true);
                     setPostData(result)
                     if (result.results !== null) {
-                        console.log(result.results)
                         if (posts !== null) {
                             setPosts([...posts, ...result.results])
                         } else { setPosts(result.results) }
@@ -63,6 +64,16 @@ const Posts = (props) => {
         setPostsUrl(props.by === 'all' ? `${config.base_url}/core/posts/?limit=10&offset=0` : `${config.base_url}/core/posts/${props.by}?limit=10&offset=0`)
     }
 
+    const handleCloseToast = () => {
+        setShowToast(false)
+    }
+
+    const handleShowToast = () => {
+        console.log('handleShowToast')
+        setShowToast(true)
+        setTimeout(handleCloseToast, 3000);
+    }
+
     if (error) {
         return <div>Ошибка: {error.message}</div>;
     } else if (!isLoaded) {
@@ -77,14 +88,14 @@ const Posts = (props) => {
                             <FormPost handlePostSubmited={handlePostSubmited}/>
                             <div className="posts col-md-7 offset-2">
                                 {posts.map(post => {
-                                    return <Post userData={props.userData} key={post.id} post={post}/>
+                                    return <Post userData={props.userData} key={post.id} post={post} handleShowToast={handleShowToast}/>
                                 })}
                             </div>
                         </>
                         :
                         <div className="posts col-md-7 offset-2">
                             {posts.map(post => {
-                                return <Post userData={props.userData} key={post.id} post={post}/>
+                                return <Post userData={props.userData} key={post.id} post={post} handleShowToast={handleShowToast} />
                             })}
                         </div>
                     }
@@ -95,6 +106,7 @@ const Posts = (props) => {
                         </div>
                         : <></>
                     }
+                    <Toast tostHeader="Post was changed saccessfully" handleCloseToast={handleCloseToast} showToast={showToast} />
                 </>
             )
         } else {
