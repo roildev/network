@@ -24,7 +24,7 @@ const Post = (props) => {
     const [postBody, setPostBody] = useState(postInfo.body)
 
     // check that onli post owner can edit post
-    const [hasPermissionToChange, setHasPermissionToChange] = useState(!!props.userData ? checkPermissionForEditPost(postInfo.author_id, props.userData.user.id) : false)
+    const hasPermissionToChange = !!props.userData ? checkPermissionForEditPost(postInfo.author_id, props.userData.user.id) : false
 
     const handleLike = () => {
         const data = { "post": props.post.id }
@@ -57,7 +57,6 @@ const Post = (props) => {
         const data = { "body": postBody }
         putData(`${config.base_url}/core/post/${postInfo.id}`, data, props.userData.token)
             .then(res => {
-                console.log(res)
                 props.handleShowToast()
             })
             .catch(err => {throw new Error(err)})

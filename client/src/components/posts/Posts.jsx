@@ -69,7 +69,6 @@ const Posts = (props) => {
     }
 
     const handleShowToast = () => {
-        console.log('handleShowToast')
         setShowToast(true)
         setTimeout(handleCloseToast, 3000);
     }
@@ -88,14 +87,14 @@ const Posts = (props) => {
                             <FormPost handlePostSubmited={handlePostSubmited}/>
                             <div className="posts col-md-7 offset-2">
                                 {posts.map(post => {
-                                    return <Post userData={props.userData} key={post.id} post={post} handleShowToast={handleShowToast}/>
+                                    return <Post userData={props.userData} key={post.id} post={post} handleShowToast={() => handleShowToast(post)}/>
                                 })}
                             </div>
                         </>
                         :
                         <div className="posts col-md-7 offset-2">
                             {posts.map(post => {
-                                return <Post userData={props.userData} key={post.id} post={post} handleShowToast={handleShowToast} />
+                                return <Post userData={props.userData} key={post.id} post={post} handleShowToast={() => handleShowToast(post)} />
                             })}
                         </div>
                     }
@@ -106,7 +105,7 @@ const Posts = (props) => {
                         </div>
                         : <></>
                     }
-                    <Toast tostHeader="Post was changed saccessfully" handleCloseToast={handleCloseToast} showToast={showToast} />
+                    <Toast tostBody="Post was changed saccessfully" tostHeader="Success!" handleCloseToast={handleCloseToast} showToast={showToast} />
                 </>
             )
         } else {

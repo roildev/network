@@ -10,7 +10,6 @@ import './App.css';
 // Pages
 import RegisterPage from './pages/Register.jsx';
 import LoginPage from './pages/Login.jsx';
-import FollowingPage from './pages/Following.jsx';
 import HomePage from './pages/Home.jsx';
 import ProfilePage from './pages/ProfilePage.jsx'
 
@@ -48,13 +47,11 @@ export default function App() {
                 <HomePage userData={userData}/>
               </Route>
               {!!userData ? 
-                <>
-                  <Route path="/following" component={FollowingPage}/>
-                  {/* <Route path={`/profile/${userData.user.id}?${userData.user.username}`} > */}
                   <Route path="/profile/:id" >
                     <ProfilePage userData={userData} />
                   </Route>
-                </>: <Route render={()=> <h1>You must login</h1>} /> }
+                  :
+                  <Route render={()=> <h1>You must login</h1>} /> }
               <Route render={()=> <h1>404 Not Found</h1>} />
             </Switch>
           </div>

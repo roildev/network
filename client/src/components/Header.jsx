@@ -35,9 +35,6 @@ const Header = (props) => {
                         <li className="nav-item">
                             <NavLink to="/" exact className="nav-link">All Posts</NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink to="/following" className="nav-link">Following</NavLink>
-                        </li>
                         {!!userData && 
                             <li className="nav-item">
                                 <button style={{backgroundColor: 'transparent', border: 'none'}} className="nav-link" onClick={logout}>Log Out</button>
