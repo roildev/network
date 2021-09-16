@@ -30,6 +30,9 @@ const LoginForm = (props) => {
     const login = (user) => {
         handleAuth(user)
         setRedirect(true)
+        if (!!localStorage.getItem('userRegistred')) {
+            localStorage.removeItem('userRegistred')
+        } 
     }
 
     if (redirect) {

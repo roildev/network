@@ -8,7 +8,6 @@ import postData from '../../services/postData.js'
 import deleteData from '../../services/deleteData.js'
 import putData from '../../services/putData.js'
 import config from '../../config.js'
-
 // only post owner can edit your own post
 const checkPermissionForEditPost = (postAuthorId, currentUserId) => {
     return postAuthorId === currentUserId
@@ -71,6 +70,7 @@ const Post = (props) => {
         diffOfDate = `${postInfo.days_ago} days ago`
     }
 
+
     return (
         <div className="posts__item card">
             <div className="card-header">
@@ -84,10 +84,11 @@ const Post = (props) => {
                 {!editMode ?
                     <p className="card-text">{postBody}</p>
                     :
-                    <input type="text"
+                    <textarea type="text"
                         className="form-control"
                         onChange={(e) => {setPostBody(e.target.value)}}
-                        value={postBody} />
+                        value={postBody} > 
+                    </textarea>
                 }
             </div>
             <div className="card-footer text-muted d-flex justify-content-between">
